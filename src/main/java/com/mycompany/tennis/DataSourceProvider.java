@@ -11,7 +11,7 @@ public class DataSourceProvider {
     public  static BasicDataSource getSingleDataSourceInstance(){
         if( singleDataSource == null){
             singleDataSource = new BasicDataSource() ;
-            singleDataSource .setUrl("jdbc:mysql://localhost:3306/TENNIS?useSSL=false");
+            singleDataSource .setUrl("jdbc:mysql://172.18.0.2:3306/TENNIS?useSSL=false");
             singleDataSource.setInitialSize(5); // nombre de connexion ouvert au demmarage
             singleDataSource.setUsername("root");
             singleDataSource.setPassword("root");
