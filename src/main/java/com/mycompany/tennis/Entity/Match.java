@@ -1,5 +1,9 @@
 package com.mycompany.tennis.Entity;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+
 public class Match {
 
     private Long id;
