@@ -2,6 +2,8 @@ package com.mycompany.tennis.Repository;
 
 import com.mycompany.tennis.DataSourceProvider;
 import com.mycompany.tennis.Entity.Tournoi;
+import com.mycompany.tennis.HibernateUtil;
+import org.hibernate.Session;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -117,36 +119,20 @@ public class TournoiRepositoryImpl {
 
      public Tournoi getTournoiById(Long id) {
          Tournoi tournoi = new Tournoi();
-
+         Session session = null;
          try {
-             String query = "select * from  TOURNOI where  id = ?";
-             conn  = DataSourceProvider.getSingleDataSourceInstance().getConnection() ;
-             PreparedStatement preparedStatement = conn.prepareStatement(query);
-             preparedStatement.setLong(1,id);
-             ResultSet resultSet = preparedStatement.executeQuery() ;
-             if(resultSet.next()){
-                 tournoi.setId(resultSet.getLong(1));
-                 tournoi.setNom(resultSet.getString(2));
-                 tournoi.setCode(resultSet.getString(3));
-             }
+          session = HibernateUtil.getSessionFactory().openSession() ;
+          tournoi = session.get(Tournoi.class,id);
 
-        }catch (SQLException e) {
+        }catch (Exception e) {
             e.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
+
         }
         finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+
+             if(session != null){
+                 session.close();
+             }        }
          return  tournoi;
      }
 

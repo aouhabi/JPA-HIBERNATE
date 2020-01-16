@@ -6,7 +6,7 @@
     <session-factory>
         <!-- JDBC Database connection settings -->
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property><!-- ou son nouveau nom com.mysql.cj.jdbc.Driver -->
-        <property name="connection.url">jdbc:mysql://localhost:3306/TENNIS?useSSL=false</property>
+        <property name="connection.url">jdbc:mysql://172.18.0.2:3306/TENNIS?useSSL=false</property>
         <property name="connection.username">root</property>
         <property name="connection.password">root</property>
 
@@ -36,7 +36,7 @@
 
 		<!-- Enities to map -->
         <mapping class="com.mycompany.tennis.Entity.Joueur" />
-		<!-- mapping class="com.mycompany.tennis.core.entity.Tournoi" /-->
+        <mapping class="com.mycompany.tennis.Entity.Tournoi" />
 
     </session-factory>
 

@@ -1,8 +1,13 @@
 package com.mycompany.tennis.Entity;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table(name = "TOURNOI")
 public class Tournoi {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id ;
    private String nom;
    private String code;
