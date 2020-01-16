@@ -4,6 +4,7 @@ import com.mycompany.tennis.DataSourceProvider;
 import com.mycompany.tennis.Entity.Tournoi;
 import com.mycompany.tennis.HibernateUtil;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,33 +19,21 @@ public class TournoiRepositoryImpl {
     }
 
     public void create (Tournoi tournoi){
+        Session session = null;
+        Transaction tx = null ;
         try {
-            conn  = DataSourceProvider.getSingleDataSourceInstance().getConnection() ;
+            session = HibernateUtil.getSessionFactory().openSession() ;
+            tx = session.beginTransaction() ;
+            session.persist(tournoi);
 
-        String query = "insert into TOURNOI (NOM, CODE) VALUE (?,?)";
-        PreparedStatement preparedStatement = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-        preparedStatement.setString(1,tournoi.getNom());
-        preparedStatement.setString(2,tournoi.getCode());
-        preparedStatement.executeUpdate() ;
-            ResultSet rs = preparedStatement.getGeneratedKeys() ;
-            if(rs.next()){
-                System.out.println("L'identifiant du tournoi créer est : "+rs.getLong(1));
-            }
-        }catch (SQLException e) {
+            tx.commit();
+        }catch (Throwable e){
             e.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
+            tx.rollback();
         }
         finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if(session != null){
+                session.close();
             }
         }
 

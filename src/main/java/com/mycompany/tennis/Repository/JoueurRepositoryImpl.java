@@ -4,6 +4,7 @@ import com.mycompany.tennis.DataSourceProvider;
 import com.mycompany.tennis.Entity.Joueur;
 import com.mycompany.tennis.HibernateUtil;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,71 +17,11 @@ public class JoueurRepositoryImpl {
 
 
     public void create (Joueur joueur){
-        try {
-            conn  = DataSourceProvider.getSingleDataSourceInstance().getConnection() ;
-
-            String query = "insert into JOUEUR (NOM, PRENOM, SEXE) value(?,?,?)";
-            PreparedStatement preparedStatement = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1,joueur.getNom());
-            preparedStatement.setString(2,joueur.getPrenom());
-            preparedStatement.setString(3,joueur.getSexe().toString());
-            preparedStatement.executeUpdate() ;
-            ResultSet rs = preparedStatement.getGeneratedKeys() ;
-            if(rs.next()){
-                System.out.println("L'identifiant du Joueur créer est : "+rs.getLong(1));
-            }
-        }catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        }
-        finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+            Session session = HibernateUtil.getSessionFactory().getCurrentSession() ;
+            session.persist(joueur);
 
     }
 
-    public void update(Joueur joueur){
-        try {
-            conn  = DataSourceProvider.getSingleDataSourceInstance().getConnection() ;
-            String query = "update JOUEUR set NOM=? , PRENOM=?, SEXE=? where ID= ?";
-
-            PreparedStatement preparedStatement = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1,joueur.getNom());
-            preparedStatement.setString(2,joueur.getPrenom());
-            preparedStatement.setString(3,joueur.getSexe().toString());
-            preparedStatement.setLong(4,joueur.getId());
-            preparedStatement.executeUpdate() ;
-
-        }catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        }
-        finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-    }
 
     public List<Joueur> getJoueurList() {
         List <Joueur>  joueurList = new ArrayList<>();
@@ -121,19 +62,8 @@ public class JoueurRepositoryImpl {
 
     public Joueur getJoueurById(Long id) {
         Joueur joueur = new Joueur();
-        Session session = null;
-        try {
-         session = HibernateUtil.getSessionFactory().openSession() ;
+         Session session = HibernateUtil.getSessionFactory().getCurrentSession() ;
          joueur = session.get(Joueur.class,id);
-
-        }catch (Throwable e){
-            e.printStackTrace();
-        }
-        finally {
-            if(session != null){
-                session.close();
-            }
-        }
         return  joueur;
     }
 
