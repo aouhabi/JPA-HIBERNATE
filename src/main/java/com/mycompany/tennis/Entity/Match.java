@@ -1,15 +1,25 @@
 package com.mycompany.tennis.Entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Objects;
 
-
+@Entity
+@Table(name = "MATCH_TENNIS")
 public class Match {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_VAINQUEUR")
     private Joueur vainqeur ;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_FINALISTE")
     private Joueur finalise ;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_EPREUVE")
     private Epreuve epreuve ;
+    @OneToOne(fetch = FetchType.LAZY,mappedBy = "match",cascade = CascadeType.ALL)
     private Score score;
 
     public Long getId() {
@@ -51,4 +61,20 @@ public class Match {
     public void setEpreuve(Epreuve epreuve) {
         this.epreuve = epreuve;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Match match = (Match) o;
+        return Objects.equals(id, match.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
+    }
+
+
 }

@@ -1,13 +1,27 @@
 package com.mycompany.tennis.Entity;
 
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
+@Table(name = "SCORE_VAINQUEUR")
 public class Score {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "SET_1")
     private Byte set1;
+    @Column(name = "SET_2")
     private Byte set2;
+    @Column(name = "SET_3")
     private Byte set3;
+    @Column(name = "SET_4")
     private Byte set4;
+    @Column(name = "SET_5")
     private Byte set5;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_MATCH")
     private Match match;
 
     public Long getId() {
@@ -64,5 +78,31 @@ public class Score {
 
     public void setSet5(Byte set5) {
         this.set5 = set5;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Score score = (Score) o;
+        return Objects.equals(id, score.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Score{" +
+                "id=" + id +
+                ", set1=" + set1 +
+                ", set2=" + set2 +
+                ", set3=" + set3 +
+                ", set4=" + set4 +
+                ", set5=" + set5 +
+                '}';
     }
 }

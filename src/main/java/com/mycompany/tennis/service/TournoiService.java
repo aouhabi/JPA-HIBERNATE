@@ -2,7 +2,10 @@ package com.mycompany.tennis.service;
 
 import com.mycompany.tennis.Entity.Joueur;
 import com.mycompany.tennis.Entity.Tournoi;
+import com.mycompany.tennis.HibernateUtil;
 import com.mycompany.tennis.Repository.TournoiRepositoryImpl;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.util.List;
 
@@ -27,6 +30,21 @@ public class TournoiService {
         return  this.repository.getTournoiById(id);
     }
     public void deleteTournoi(Long id){
-        this.repository.deleteTournois(id);
+        Session session = null;
+        Transaction tx = null ;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            tx = session.beginTransaction() ;
+            this.repository.deleteTournois(id);
+            tx.commit();
+        }catch (Throwable e){
+            e.printStackTrace();
+            tx.rollback();
+        }
+        finally {
+            if(session != null){
+                session.close();
+            }
+        }
     }
 }

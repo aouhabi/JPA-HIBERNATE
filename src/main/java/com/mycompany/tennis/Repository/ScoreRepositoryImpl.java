@@ -3,6 +3,9 @@ package com.mycompany.tennis.Repository;
 import com.mycompany.tennis.DataSourceProvider;
 import com.mycompany.tennis.Entity.Joueur;
 import com.mycompany.tennis.Entity.Score;
+import com.mycompany.tennis.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -65,5 +68,13 @@ public class ScoreRepositoryImpl {
 
     }
 
+    public Score getById(Long id){
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession() ;
+        Score score = session.get(Score.class,id) ;
 
-}
+        return  score ;
+    }
+
+    }
+
+

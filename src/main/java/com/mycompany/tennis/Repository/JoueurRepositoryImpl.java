@@ -5,6 +5,7 @@ import com.mycompany.tennis.Entity.Joueur;
 import com.mycompany.tennis.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -23,41 +24,10 @@ public class JoueurRepositoryImpl {
     }
 
 
-    public List<Joueur> getJoueurList() {
-        List <Joueur>  joueurList = new ArrayList<>();
-        try{
-            conn  = DataSourceProvider.getSingleDataSourceInstance().getConnection() ;
-            String query = "select * from  JOUEUR";
-            PreparedStatement preparedStatement = conn.prepareStatement(query);
-
-            ResultSet resultSet = preparedStatement.executeQuery() ;
-            while (resultSet.next()){
-                Joueur joueur = new Joueur();
-                joueur.setId(resultSet.getLong(1));
-                joueur.setNom(resultSet.getString(2));
-                joueur.setPrenom(resultSet.getString(3));
-                joueur.setSexe(resultSet.getString(4).charAt(0));
-                joueurList.add(joueur) ;
-            }
-
-        }catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        }
-        finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return  joueurList ;
+    public List<Joueur> getAll(){
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Query<Joueur> query = session.createNamedQuery("select_all",Joueur.class);
+        return  query.getResultList();
     }
 
     public Joueur getJoueurById(Long id) {
@@ -68,33 +38,9 @@ public class JoueurRepositoryImpl {
     }
 
     public void deleteJoueur(Long id){
-        try{
-            conn  = DataSourceProvider.getSingleDataSourceInstance().getConnection() ;
-            String query = "delete  from JOUEUR where ID= ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setLong(1,id);
-            ResultSet rs = preparedStatement.getGeneratedKeys() ;
-            if(rs.next()){
-                System.out.println("L'identifiant du Joueur supprimer est : "+rs.getLong(1));
-            }
-            preparedStatement.executeUpdate() ;
-
-        }catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        }
-        finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Joueur joueur = getJoueurById(id);
+        session.delete(joueur);
+        System.out.println("utilisateur supprimer "+joueur);
     }
 }

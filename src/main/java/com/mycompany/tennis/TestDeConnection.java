@@ -34,7 +34,7 @@ public class TestDeConnection {
         Epreuve epreuve = new Epreuve();
         epreuve.setId(10L);
         match.setEpreuve(epreuve);
-        matchService.enregistrerNouveauMatch(match);
+  //      matchService.enregistrerNouveauMatch(match);
 //        joueurService.createJoueur(joueur);
 //        tournoiService.createTournoi(tournoi);
 //        Joueur j = joueurService.getJoueurById(50L);

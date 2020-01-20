@@ -18,7 +18,7 @@
         <property name="hibernate.dbcp.maxWaitMillis">-1</property-->
 		
 		<!-- Select our SQL dialect -->
-        <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
+        <property name="dialect">org.hibernate.dialect.MySQL57Dialect</property>
 		
 		<!-- Echo the SQL to stdout -->
         <property name="show_sql">true</property>
@@ -37,6 +37,9 @@
 		<!-- Enities to map -->
         <mapping class="com.mycompany.tennis.Entity.Joueur" />
         <mapping class="com.mycompany.tennis.Entity.Tournoi" />
+        <mapping class="com.mycompany.tennis.Entity.Epreuve" />
+        <mapping class="com.mycompany.tennis.Entity.Score" />
+        <mapping class="com.mycompany.tennis.Entity.Match" />
 
     </session-factory>
 
