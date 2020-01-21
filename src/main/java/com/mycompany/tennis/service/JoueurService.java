@@ -1,12 +1,15 @@
 package com.mycompany.tennis.service;
 
 import com.mycompany.tennis.Entity.Joueur;
+import com.mycompany.tennis.EntityManagerHolder;
 import com.mycompany.tennis.HibernateUtil;
 import com.mycompany.tennis.Repository.JoueurRepositoryImpl;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +65,8 @@ public class JoueurService {
         Transaction tx = null ;
         List<Joueur> joueurList = new ArrayList<>();
         try {
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            //session = HibernateUtil.getSessionFactory().getCurrentSession();
+            EntityManager entityManager = (EntityManager) Persistence.createEntityManagerFactory("tennis-unit");
             tx = session.beginTransaction() ;
             joueurList = this.repository.getAll() ;
             tx.commit();
