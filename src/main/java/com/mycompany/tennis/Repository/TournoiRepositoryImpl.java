@@ -21,23 +21,9 @@ public class TournoiRepositoryImpl {
     }
 
     public void create (Tournoi tournoi){
-        Session session = null;
-        Transaction tx = null ;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession() ;
-            tx = session.beginTransaction() ;
-            session.persist(tournoi);
+       EntityManager em = EntityManagerHolder.getEntityManager() ;
+       em.persist(tournoi);
 
-            tx.commit();
-        }catch (Throwable e){
-            e.printStackTrace();
-            tx.rollback();
-        }
-        finally {
-            if(session != null){
-                session.close();
-            }
-        }
 
     }
 
@@ -110,17 +96,17 @@ public class TournoiRepositoryImpl {
 
      public Tournoi getTournoiById(Long id) {
          Tournoi tournoi = new Tournoi();
-         EntityManager em = new EntityManagerHolder().getCurrentEntityManager() ;
+         EntityManager em =  EntityManagerHolder.getEntityManager() ;
           tournoi = em.find(Tournoi.class,id);
          return  tournoi;
      }
 
      public void deleteTournois(Long id){
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession() ;
 
-        Tournoi tournoi = getTournoiById(id) ;
-        session.delete(tournoi);
-        System.out.println("Tournoi supprimer "+tournoi);
+        EntityManager em =  EntityManagerHolder.getEntityManager() ;
+        Tournoi t = em.find(Tournoi.class,id);
+        em.remove(t);
+        System.out.println("Tournoi supprimer "+t.getId());
 
      }
 }

@@ -1,6 +1,5 @@
 package com.mycompany.tennis.service;
 
-import com.mycompany.tennis.Entity.Joueur;
 import com.mycompany.tennis.Entity.Tournoi;
 import com.mycompany.tennis.EntityManagerHolder;
 import com.mycompany.tennis.HibernateUtil;
@@ -21,6 +20,23 @@ public class TournoiService {
 
     public void createTournoi(Tournoi tournoi){
         this.repository.create(tournoi);
+        EntityManager em = null;
+       // EntityTransaction tx = null ;
+        try {
+            em = EntityManagerHolder.getEntityManager();
+            EntityManagerHolder.beginTransaction();
+            this.repository.create(tournoi);
+            EntityManagerHolder.commit();
+        }catch (Throwable e){
+            e.printStackTrace();
+            EntityManagerHolder.rollback();
+        }
+        finally {
+            if(em != null){
+               em.close();
+            }
+        }
+
     }
 
     public void updateTournois(Tournoi tournoi){
@@ -34,7 +50,7 @@ public class TournoiService {
         EntityTransaction tx = null ;
         Tournoi tournoi = null;
         try {
-            em = new EntityManagerHolder().getCurrentEntityManager();
+            em = EntityManagerHolder.getEntityManager();
             tx = em.getTransaction();
             tx.begin();
             tournoi = this.repository.getTournoiById(id);
@@ -52,11 +68,13 @@ public class TournoiService {
         return tournoi ;
     }
     public void deleteTournoi(Long id){
-        Session session = null;
-        Transaction tx = null ;
+            EntityManager em = null ;
+            EntityTransaction tx = null;
+
         try {
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
-            tx = session.beginTransaction() ;
+            em = EntityManagerHolder.getEntityManager() ;
+            tx = em.getTransaction() ;
+            tx.begin();
             this.repository.deleteTournois(id);
             tx.commit();
         }catch (Throwable e){
@@ -64,8 +82,8 @@ public class TournoiService {
             tx.rollback();
         }
         finally {
-            if(session != null){
-                session.close();
+            if(em != null){
+                em.close();
             }
         }
     }

@@ -6,27 +6,46 @@ import javax.persistence.Persistence;
 
 
 public class EntityManagerHolder {
-    private final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
-    private static EntityManagerFactory entityManagerFactory = buildEntityManagerFactory();
 
-    private static EntityManagerFactory buildEntityManagerFactory(){
-        return Persistence.createEntityManagerFactory("tennis-unit");
+    private static final EntityManagerFactory emf;
+    private static final ThreadLocal<EntityManager> threadLocal;
+
+    static {
+        emf = Persistence.createEntityManagerFactory("tennis-unit");
+        threadLocal = new ThreadLocal<EntityManager>();
     }
 
-    /**
-     * @return The {@link EntityManager} linked to this thread
-     */
-    public EntityManager getCurrentEntityManager() {
-        EntityManager entityManager = entityManagerThreadLocal.get();
+    public static EntityManager getEntityManager() {
+        EntityManager em = threadLocal.get();
 
-        if (entityManager == null) {
-
-            // Start the conversation by creating the EntityManager for this thread
-            entityManager = entityManagerFactory.createEntityManager();
-            entityManagerThreadLocal.set(entityManager);
-
+        if (em == null) {
+            em = emf.createEntityManager();
+            threadLocal.set(em);
         }
-        return entityManager;
+        return em;
     }
 
+    public static void closeEntityManager() {
+        EntityManager em = threadLocal.get();
+        if (em != null) {
+            em.close();
+            threadLocal.set(null);
+        }
+    }
+
+    public static void closeEntityManagerFactory() {
+        emf.close();
+    }
+
+    public static void beginTransaction() {
+        getEntityManager().getTransaction().begin();
+    }
+
+    public static void rollback() {
+        getEntityManager().getTransaction().rollback();
+    }
+
+    public static void commit() {
+        getEntityManager().getTransaction().commit();
+    }
 }
